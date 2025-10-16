@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,3 +25,11 @@ jobs:
         env:
           MY_EMAIL: ${{ secrets.MY_EMAIL }}
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add last_id.txt
+          git diff --staged --quiet || git commit -m "📝 Update last_id.txt [skip ci]"
+          git push
